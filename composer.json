@@ -1,0 +1,22 @@
+{
+	"name": "dimadin/ad-server",
+	"description": "Ad Server",
+	"keywords": ["ad"],
+	"homepage": "https://github.com/dimadin/ad-server",
+	"type": "library",
+	"license": "GPL",
+	"authors": [
+		{
+			"name": "Milan Dinić",
+			"email": "milan@srpski.biz",
+			"homepage": "http://blog.milandinic.com/"
+		}
+	],
+	"require": {
+		"geoip2/geoip2": "2.1.1",
+		"alcohol/iso3166": "2.1.2"
+	},
+	"autoload": {
+        "files": ["inc/template-tags.php","inc/class-ad-server-ip-resolver.php"]
+    }
+}
