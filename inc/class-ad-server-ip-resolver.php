@@ -62,11 +62,15 @@ class Ad_Server_IP_Resolver {
 	 * @access protected
 	 */
 	protected function parse_geolite2_country() {
-		$reader = new GeoIp2\Database\Reader( $this->ad_server->path . '/lib/GeoLite2/GeoLite2-Country.mmdb' );
-		$record = $reader->country( $this->ad_server->ip_address );
+		try {
+			$reader = new GeoIp2\Database\Reader( $this->ad_server->path . '/lib/GeoLite2/GeoLite2-Country.mmdb' );
+			$record = $reader->country( $this->ad_server->ip_address );
 
-		$this->ad_server->country   = $record->country->isoCode;
-		$this->ad_server->continent = $record->continent->code;
+			$this->ad_server->country   = $record->country->isoCode;
+			$this->ad_server->continent = $record->continent->code;
+		} catch ( \GeoIp2\Exception\AddressNotFoundException $e ) {
+		} catch ( \MaxMind\Db\Reader\InvalidDatabaseException $e ) {
+		}
 	}
 }
 endif;
