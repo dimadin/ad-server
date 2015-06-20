@@ -168,8 +168,9 @@ class Ad_Server {
 		$this->ad_post_type         = $this->ad_post_type();
 
 		// Register main hooks
-		add_action( 'init',      array( $this, 'init'      )    );
-		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 2 );
+		add_action( 'init',      array( $this, 'init'             )    );
+		add_action( 'p2p_init',  array( $this, 'connection_types' )    );
+		add_action( 'wp_loaded', array( $this, 'wp_loaded'        ), 2 );
 	}
 
 	/**
@@ -573,6 +574,69 @@ class Ad_Server {
 			$this->ad_post_type,
 			$ad_post_type_args
 		);
+	}
+
+	/**
+	 * Connect post types via Posts 2 Posts.
+	 *
+	 * @access public
+	 */
+	public function connection_types() {
+		// Site belongs to publisher
+		p2p_register_connection_type( array(
+			'name' => 'publisher_to_site',
+			'from' => $this->publisher_post_type,
+			'to'   => $this->site_post_type
+		) );
+
+		// Page belongs to site
+		p2p_register_connection_type( array(
+			'name' => 'site_to_page',
+			'from' => $this->site_post_type,
+			'to'   => $this->page_post_type
+		) );
+
+		// Zone belongs to page
+		p2p_register_connection_type( array(
+			'name' => 'page_to_site',
+			'from' => $this->page_post_type,
+			'to'   => $this->zone_post_type
+		) );
+
+		// Campaign belongs to advertiser
+		p2p_register_connection_type( array(
+			'name' => 'advertiser_to_campaign',
+			'from' => $this->advertiser_post_type,
+			'to'   => $this->campaign_post_type
+		) );
+
+		// Ad belongs to campaign
+		p2p_register_connection_type( array(
+			'name' => 'campaign_to_ad',
+			'from' => $this->campaign_post_type,
+			'to'   => $this->ad_post_type
+		) );
+
+		// Ad can be added to zone
+		p2p_register_connection_type( array(
+			'name' => 'ad_to_zone',
+			'from' => $this->ad_post_type,
+			'to'   => $this->zone_post_type
+		) );
+
+		// Campaign can be added to zone
+		p2p_register_connection_type( array(
+			'name' => 'campaign_to_zone',
+			'from' => $this->campaign_post_type,
+			'to'   => $this->zone_post_type
+		) );
+
+		// Advertiser can be added to zone
+		p2p_register_connection_type( array(
+			'name' => 'advertiser_to_zone',
+			'from' => $this->advertiser_post_type,
+			'to'   => $this->zone_post_type
+		) );
 	}
 
 	/**
