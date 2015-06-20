@@ -768,6 +768,7 @@ class Ad_Server {
 
 	/**
 	 * Get name of ad post type.
+	 *
 	 * @access public
 	 *
 	 * @return string $ad_post_type The name of the post type. Default 'ad'.
