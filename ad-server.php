@@ -96,6 +96,11 @@ class Ad_Server {
 	 * @access public
 	 */
 	public function __construct() {
+		if ( ! defined( 'P2P_PLUGIN_VERSION' ) || ! defined( 'RWMB_VER' ) ) {
+			add_action( 'tgmpa_register', array( 'Ad_Server', 'register_required_plugins' ) );
+			return;
+		}
+
 		// Set path
 		$this->path = rtrim( plugin_dir_path( __FILE__ ), '/' );
 
@@ -105,6 +110,38 @@ class Ad_Server {
 		// Register main hooks
 		add_action( 'init',      array( $this, 'init'      )    );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 2 );
+	}
+
+	/**
+	 * Register the required plugins for this plugin.
+	 *
+	 * @access public
+	 */
+	public static function register_required_plugins() {
+		if ( ! function_exists( 'tgmpa' ) ) {
+			return;
+		}
+
+		/*
+		 * Array of plugin arrays. Required keys are name and slug.
+		 * If the source is NOT from the .org repo, then source is also required.
+		 */
+		$plugins = array(
+			array(
+				'name'             => 'Posts 2 Posts',
+				'slug'             => 'posts-to-posts',
+				'required'         => true,
+				'force_activation' => true,
+			),
+			array(
+				'name'             => 'Meta Box',
+				'slug'             => 'meta-box',
+				'required'         => true,
+				'force_activation' => true,
+			),
+		);
+
+		tgmpa( $plugins );
 	}
 
 	/**
