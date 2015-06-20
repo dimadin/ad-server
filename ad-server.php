@@ -53,6 +53,60 @@ class Ad_Server {
 	public $path;
 
 	/**
+	 * Name of publisher post type.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $publisher_post_type;
+
+	/**
+	 * Name of site post type.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $site_post_type;
+
+	/**
+	 * Name of page post type.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $page_post_type;
+
+	/**
+	 * Name of zone post type.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $zone_post_type;
+
+	/**
+	 * Name of advertiser post type.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $advertiser_post_type;
+
+	/**
+	 * Name of campaign post type.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $campaign_post_type;
+
+	/**
 	 * Name of ad post type.
 	 *
 	 * @access public
@@ -104,8 +158,14 @@ class Ad_Server {
 		// Set path
 		$this->path = rtrim( plugin_dir_path( __FILE__ ), '/' );
 
-		// Set ad post type name
-		$this->ad_post_type = $this->ad_post_type();
+		// Set post types names
+		$this->publisher_post_type  = $this->publisher_post_type();
+		$this->site_post_type       = $this->site_post_type();
+		$this->page_post_type       = $this->page_post_type();
+		$this->zone_post_type       = $this->zone_post_type();
+		$this->advertiser_post_type = $this->advertiser_post_type();
+		$this->campaign_post_type   = $this->campaign_post_type();
+		$this->ad_post_type         = $this->ad_post_type();
 
 		// Register main hooks
 		add_action( 'init',      array( $this, 'init'      )    );
@@ -150,7 +210,319 @@ class Ad_Server {
 	 * @access public
 	 */
 	public function init() {
-		// Register ad post types
+		// Register publisher post type
+		$default_publisher_post_type_labels = array(
+			'name'                => _x( 'Publishers', 'Post Type General Name', 'ad-server' ),
+			'singular_name'       => _x( 'Publisher', 'Post Type Singular Name', 'ad-server' ),
+			'menu_name'           => __( 'Publishers', 'ad-server' ),
+			'name_admin_bar'      => __( 'Publishers', 'ad-server' ),
+			'parent_item_colon'   => __( 'Parent Publisher:', 'ad-server' ),
+			'all_items'           => __( 'All Publishers', 'ad-server' ),
+			'add_new_item'        => __( 'Add New Publisher', 'ad-server' ),
+			'add_new'             => __( 'Add New', 'ad-server' ),
+			'new_item'            => __( 'New Publisher', 'ad-server' ),
+			'edit_item'           => __( 'Edit Publisher', 'ad-server' ),
+			'update_item'         => __( 'Update Publisher', 'ad-server' ),
+			'view_item'           => __( 'View Publisher', 'ad-server' ),
+			'search_items'        => __( 'Search Publisher', 'ad-server' ),
+			'not_found'           => __( 'Not found', 'ad-server' ),
+			'not_found_in_trash'  => __( 'Not found in Trash', 'ad-server' ),
+		);
+		$default_publisher_post_type_args = array(
+			'label'               => __( 'Publisher', 'ad-server' ),
+			'description'         => __( 'Post Type Description', 'ad-server' ),
+			'labels'              => $default_publisher_post_type_labels,
+			'supports'            => array( 'title', 'thumbnail', ),
+			'hierarchical'        => false,
+			'public'              => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'menu_position'       => 5,
+			'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => false,
+			'can_export'          => true,
+			'has_archive'         => false,
+			'exclude_from_search' => true,
+			'publicly_queryable'  => false,
+			'rewrite'             => false,
+			'capability_type'     => 'post',
+		);
+		/**
+		 * Filter parameters used when registering publisher post type.
+		 *
+		 * @see register_post_type()
+		 *
+		 * @param array $args The array of parameters used when registering ad post type.
+		 */
+		$publisher_post_type_args = (array) apply_filters( 'ad_server_register_publisher_post_type_args', $default_publisher_post_type_args );
+		$publisher_post_type_args = wp_parse_args( $publisher_post_type_args, $default_publisher_post_type_args );
+
+		register_post_type(
+			$this->publisher_post_type,
+			$publisher_post_type_args
+		);
+
+		// Register site post type
+		$default_site_post_type_labels = array(
+			'name'                => _x( 'Sites', 'Post Type General Name', 'ad-server' ),
+			'singular_name'       => _x( 'Site', 'Post Type Singular Name', 'ad-server' ),
+			'menu_name'           => __( 'Sites', 'ad-server' ),
+			'name_admin_bar'      => __( 'Sites', 'ad-server' ),
+			'parent_item_colon'   => __( 'Parent Site:', 'ad-server' ),
+			'all_items'           => __( 'All Sites', 'ad-server' ),
+			'add_new_item'        => __( 'Add New Site', 'ad-server' ),
+			'add_new'             => __( 'Add New', 'ad-server' ),
+			'new_item'            => __( 'New Site', 'ad-server' ),
+			'edit_item'           => __( 'Edit Site', 'ad-server' ),
+			'update_item'         => __( 'Update Site', 'ad-server' ),
+			'view_item'           => __( 'View Site', 'ad-server' ),
+			'search_items'        => __( 'Search Site', 'ad-server' ),
+			'not_found'           => __( 'Not found', 'ad-server' ),
+			'not_found_in_trash'  => __( 'Not found in Trash', 'ad-server' ),
+		);
+		$default_site_post_type_args = array(
+			'label'               => __( 'Site', 'ad-server' ),
+			'description'         => __( 'Post Type Description', 'ad-server' ),
+			'labels'              => $default_site_post_type_labels,
+			'supports'            => array( 'title', 'thumbnail', ),
+			'hierarchical'        => false,
+			'public'              => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'menu_position'       => 5,
+			'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => false,
+			'can_export'          => true,
+			'has_archive'         => false,
+			'exclude_from_search' => true,
+			'publicly_queryable'  => false,
+			'rewrite'             => false,
+			'capability_type'     => 'post',
+		);
+		/**
+		 * Filter parameters used when registering site post type.
+		 *
+		 * @see register_post_type()
+		 *
+		 * @param array $args The array of parameters used when registering ad post type.
+		 */
+		$site_post_type_args = (array) apply_filters( 'ad_server_register_site_post_type_args', $default_site_post_type_args );
+		$site_post_type_args = wp_parse_args( $site_post_type_args, $default_site_post_type_args );
+
+		register_post_type(
+			$this->site_post_type,
+			$site_post_type_args
+		);
+
+		// Register page post type
+		$default_page_post_type_labels = array(
+			'name'                => _x( 'Pages', 'Post Type General Name', 'ad-server' ),
+			'singular_name'       => _x( 'Page', 'Post Type Singular Name', 'ad-server' ),
+			'menu_name'           => __( 'Pages', 'ad-server' ),
+			'name_admin_bar'      => __( 'Pages', 'ad-server' ),
+			'parent_item_colon'   => __( 'Parent Page:', 'ad-server' ),
+			'all_items'           => __( 'All Pages', 'ad-server' ),
+			'add_new_item'        => __( 'Add New Page', 'ad-server' ),
+			'add_new'             => __( 'Add New', 'ad-server' ),
+			'new_item'            => __( 'New Page', 'ad-server' ),
+			'edit_item'           => __( 'Edit Page', 'ad-server' ),
+			'update_item'         => __( 'Update Page', 'ad-server' ),
+			'view_item'           => __( 'View Page', 'ad-server' ),
+			'search_items'        => __( 'Search Page', 'ad-server' ),
+			'not_found'           => __( 'Not found', 'ad-server' ),
+			'not_found_in_trash'  => __( 'Not found in Trash', 'ad-server' ),
+		);
+		$default_page_post_type_args = array(
+			'label'               => __( 'Page', 'ad-server' ),
+			'description'         => __( 'Post Type Description', 'ad-server' ),
+			'labels'              => $default_page_post_type_labels,
+			'supports'            => array( 'title', 'thumbnail', ),
+			'hierarchical'        => false,
+			'public'              => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'menu_position'       => 5,
+			'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => false,
+			'can_export'          => true,
+			'has_archive'         => false,
+			'exclude_from_search' => true,
+			'publicly_queryable'  => false,
+			'rewrite'             => false,
+			'capability_type'     => 'post',
+		);
+		/**
+		 * Filter parameters used when registering page post type.
+		 *
+		 * @see register_post_type()
+		 *
+		 * @param array $args The array of parameters used when registering ad post type.
+		 */
+		$page_post_type_args = (array) apply_filters( 'ad_server_register_page_post_type_args', $default_page_post_type_args );
+		$page_post_type_args = wp_parse_args( $page_post_type_args, $default_page_post_type_args );
+
+		register_post_type(
+			$this->page_post_type,
+			$page_post_type_args
+		);
+
+		// Register zone post type
+		$default_zone_post_type_labels = array(
+			'name'                => _x( 'Zones', 'Post Type General Name', 'ad-server' ),
+			'singular_name'       => _x( 'Zone', 'Post Type Singular Name', 'ad-server' ),
+			'menu_name'           => __( 'Zones', 'ad-server' ),
+			'name_admin_bar'      => __( 'Zones', 'ad-server' ),
+			'parent_item_colon'   => __( 'Parent Zone:', 'ad-server' ),
+			'all_items'           => __( 'All Zones', 'ad-server' ),
+			'add_new_item'        => __( 'Add New Zone', 'ad-server' ),
+			'add_new'             => __( 'Add New', 'ad-server' ),
+			'new_item'            => __( 'New Zone', 'ad-server' ),
+			'edit_item'           => __( 'Edit Zone', 'ad-server' ),
+			'update_item'         => __( 'Update Zone', 'ad-server' ),
+			'view_item'           => __( 'View Zone', 'ad-server' ),
+			'search_items'        => __( 'Search Zone', 'ad-server' ),
+			'not_found'           => __( 'Not found', 'ad-server' ),
+			'not_found_in_trash'  => __( 'Not found in Trash', 'ad-server' ),
+		);
+		$default_zone_post_type_args = array(
+			'label'               => __( 'Zone', 'ad-server' ),
+			'description'         => __( 'Post Type Description', 'ad-server' ),
+			'labels'              => $default_zone_post_type_labels,
+			'supports'            => array( 'title', 'thumbnail', ),
+			'hierarchical'        => false,
+			'public'              => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'menu_position'       => 5,
+			'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => false,
+			'can_export'          => true,
+			'has_archive'         => false,
+			'exclude_from_search' => true,
+			'publicly_queryable'  => false,
+			'rewrite'             => false,
+			'capability_type'     => 'post',
+		);
+		/**
+		 * Filter parameters used when registering zone post type.
+		 *
+		 * @see register_post_type()
+		 *
+		 * @param array $args The array of parameters used when registering ad post type.
+		 */
+		$zone_post_type_args = (array) apply_filters( 'ad_server_register_zone_post_type_args', $default_zone_post_type_args );
+		$zone_post_type_args = wp_parse_args( $zone_post_type_args, $default_zone_post_type_args );
+
+		register_post_type(
+			$this->zone_post_type,
+			$zone_post_type_args
+		);
+
+		// Register advertiser post type
+		$default_advertiser_post_type_labels = array(
+			'name'                => _x( 'Advertisers', 'Post Type General Name', 'ad-server' ),
+			'singular_name'       => _x( 'Advertiser', 'Post Type Singular Name', 'ad-server' ),
+			'menu_name'           => __( 'Advertisers', 'ad-server' ),
+			'name_admin_bar'      => __( 'Advertisers', 'ad-server' ),
+			'parent_item_colon'   => __( 'Parent Advertiser:', 'ad-server' ),
+			'all_items'           => __( 'All Advertisers', 'ad-server' ),
+			'add_new_item'        => __( 'Add New Advertiser', 'ad-server' ),
+			'add_new'             => __( 'Add New', 'ad-server' ),
+			'new_item'            => __( 'New Advertiser', 'ad-server' ),
+			'edit_item'           => __( 'Edit Advertiser', 'ad-server' ),
+			'update_item'         => __( 'Update Advertiser', 'ad-server' ),
+			'view_item'           => __( 'View Advertiser', 'ad-server' ),
+			'search_items'        => __( 'Search Advertiser', 'ad-server' ),
+			'not_found'           => __( 'Not found', 'ad-server' ),
+			'not_found_in_trash'  => __( 'Not found in Trash', 'ad-server' ),
+		);
+		$default_advertiser_post_type_args = array(
+			'label'               => __( 'Advertiser', 'ad-server' ),
+			'description'         => __( 'Post Type Description', 'ad-server' ),
+			'labels'              => $default_advertiser_post_type_labels,
+			'supports'            => array( 'title', 'thumbnail', ),
+			'hierarchical'        => false,
+			'public'              => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'menu_position'       => 5,
+			'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => false,
+			'can_export'          => true,
+			'has_archive'         => false,
+			'exclude_from_search' => true,
+			'publicly_queryable'  => false,
+			'rewrite'             => false,
+			'capability_type'     => 'post',
+		);
+		/**
+		 * Filter parameters used when registering advertiser post type.
+		 *
+		 * @see register_post_type()
+		 *
+		 * @param array $args The array of parameters used when registering ad post type.
+		 */
+		$advertiser_post_type_args = (array) apply_filters( 'ad_server_register_advertiser_post_type_args', $default_advertiser_post_type_args );
+		$advertiser_post_type_args = wp_parse_args( $advertiser_post_type_args, $default_advertiser_post_type_args );
+
+		register_post_type(
+			$this->advertiser_post_type,
+			$advertiser_post_type_args
+		);
+
+		// Register campaign post type
+		$default_campaign_post_type_labels = array(
+			'name'                => _x( 'Campaigns', 'Post Type General Name', 'ad-server' ),
+			'singular_name'       => _x( 'Campaign', 'Post Type Singular Name', 'ad-server' ),
+			'menu_name'           => __( 'Campaigns', 'ad-server' ),
+			'name_admin_bar'      => __( 'Campaigns', 'ad-server' ),
+			'parent_item_colon'   => __( 'Parent Campaign:', 'ad-server' ),
+			'all_items'           => __( 'All Campaigns', 'ad-server' ),
+			'add_new_item'        => __( 'Add New Campaign', 'ad-server' ),
+			'add_new'             => __( 'Add New', 'ad-server' ),
+			'new_item'            => __( 'New Campaign', 'ad-server' ),
+			'edit_item'           => __( 'Edit Campaign', 'ad-server' ),
+			'update_item'         => __( 'Update Campaign', 'ad-server' ),
+			'view_item'           => __( 'View Campaign', 'ad-server' ),
+			'search_items'        => __( 'Search Campaign', 'ad-server' ),
+			'not_found'           => __( 'Not found', 'ad-server' ),
+			'not_found_in_trash'  => __( 'Not found in Trash', 'ad-server' ),
+		);
+		$default_campaign_post_type_args = array(
+			'label'               => __( 'Campaign', 'ad-server' ),
+			'description'         => __( 'Post Type Description', 'ad-server' ),
+			'labels'              => $default_campaign_post_type_labels,
+			'supports'            => array( 'title', 'thumbnail', ),
+			'hierarchical'        => false,
+			'public'              => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'menu_position'       => 5,
+			'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => false,
+			'can_export'          => true,
+			'has_archive'         => false,
+			'exclude_from_search' => true,
+			'publicly_queryable'  => false,
+			'rewrite'             => false,
+			'capability_type'     => 'post',
+		);
+		/**
+		 * Filter parameters used when registering campaign post type.
+		 *
+		 * @see register_post_type()
+		 *
+		 * @param array $args The array of parameters used when registering ad post type.
+		 */
+		$campaign_post_type_args = (array) apply_filters( 'ad_server_register_campaign_post_type_args', $default_campaign_post_type_args );
+		$campaign_post_type_args = wp_parse_args( $campaign_post_type_args, $default_campaign_post_type_args );
+
+		register_post_type(
+			$this->campaign_post_type,
+			$campaign_post_type_args
+		);
+
+		// Register ad post type
 		$default_ad_post_type_labels = array(
 			'name'                => _x( 'Ads', 'Post Type General Name', 'ad-server' ),
 			'singular_name'       => _x( 'Ad', 'Post Type Singular Name', 'ad-server' ),
@@ -220,6 +592,114 @@ class Ad_Server {
 			// Hook meta box class
 			new Ad_Server_Meta_Box( $this );
 		}
+	}
+
+	/**
+	 * Get name of publisher post type.
+	 *
+	 * @access public
+	 *
+	 * @return string $ad_post_type The name of the post type. Default 'ad_server_publisher'.
+	 */
+	public function publisher_post_type() {
+		/**
+		 * Filter the name of the publisher post type.
+		 *
+		 * @param string $ad_post_type The name of the publisher post type. Default 'ad_server_publisher'.
+		 */
+		$publisher_post_type = sanitize_key( apply_filters( 'ad_server_publisher_post_type_name', 'ad_server_publisher' ) );
+
+		return $publisher_post_type;
+	}
+
+	/**
+	 * Get name of site post type.
+	 *
+	 * @access public
+	 *
+	 * @return string $ad_post_type The name of the post type. Default 'ad_server_site'.
+	 */
+	public function site_post_type() {
+		/**
+		 * Filter the name of the site post type.
+		 *
+		 * @param string $ad_post_type The name of the site post type. Default 'ad_server_site'.
+		 */
+		$site_post_type = sanitize_key( apply_filters( 'ad_server_site_post_type_name', 'ad_server_site' ) );
+
+		return $site_post_type;
+	}
+
+	/**
+	 * Get name of page post type.
+	 *
+	 * @access public
+	 *
+	 * @return string $ad_post_type The name of the post type. Default 'ad_server_page'.
+	 */
+	public function page_post_type() {
+		/**
+		 * Filter the name of the page post type.
+		 *
+		 * @param string $ad_post_type The name of the page post type. Default 'ad_server_page'.
+		 */
+		$page_post_type = sanitize_key( apply_filters( 'ad_server_page_post_type_name', 'ad_server_page' ) );
+
+		return $page_post_type;
+	}
+
+	/**
+	 * Get name of zone post type.
+	 *
+	 * @access public
+	 *
+	 * @return string $ad_post_type The name of the post type. Default 'ad_server_zone'.
+	 */
+	public function zone_post_type() {
+		/**
+		 * Filter the name of the zone post type.
+		 *
+		 * @param string $ad_post_type The name of the zone post type. Default 'ad_server_zone'.
+		 */
+		$zone_post_type = sanitize_key( apply_filters( 'ad_server_zone_post_type_name', 'ad_server_zone' ) );
+
+		return $zone_post_type;
+	}
+
+	/**
+	 * Get name of advertiser post type.
+	 *
+	 * @access public
+	 *
+	 * @return string $ad_post_type The name of the post type. Default 'ad_server_advertiser'.
+	 */
+	public function advertiser_post_type() {
+		/**
+		 * Filter the name of the advertiser post type.
+		 *
+		 * @param string $ad_post_type The name of the advertiser post type. Default 'ad_server_advertiser'.
+		 */
+		$advertiser_post_type = sanitize_key( apply_filters( 'ad_server_advertiser_post_type_name', 'ad_server_advertiser' ) );
+
+		return $advertiser_post_type;
+	}
+
+	/**
+	 * Get name of campaign post type.
+	 *
+	 * @access public
+	 *
+	 * @return string $ad_post_type The name of the post type. Default 'ad_server_campaign'.
+	 */
+	public function campaign_post_type() {
+		/**
+		 * Filter the name of the campaign post type.
+		 *
+		 * @param string $ad_post_type The name of the campaign post type. Default 'ad_server_campaign'.
+		 */
+		$campaign_post_type = sanitize_key( apply_filters( 'ad_server_campaign_post_type_name', 'ad_server_campaign' ) );
+
+		return $campaign_post_type;
 	}
 
 	/**
