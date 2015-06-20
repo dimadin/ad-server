@@ -150,7 +150,7 @@ class Ad_Server {
 	 * @access public
 	 */
 	public function init() {
-		// Register post types
+		// Register ad post types
 		$default_ad_post_type_labels = array(
 			'name'                => _x( 'Ads', 'Post Type General Name', 'ad-server' ),
 			'singular_name'       => _x( 'Ad', 'Post Type Singular Name', 'ad-server' ),
@@ -200,7 +200,7 @@ class Ad_Server {
 		register_post_type(
 			$this->ad_post_type,
 			$ad_post_type_args
-		);	
+		);
 	}
 
 	/**
