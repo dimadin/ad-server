@@ -598,7 +598,7 @@ class Ad_Server {
 
 		// Zone belongs to page
 		p2p_register_connection_type( array(
-			'name' => 'page_to_site',
+			'name' => 'page_to_zone',
 			'from' => $this->page_post_type,
 			'to'   => $this->zone_post_type
 		) );
