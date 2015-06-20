@@ -171,6 +171,10 @@ class Ad_Server {
 		add_action( 'init',      array( $this, 'init'             )    );
 		add_action( 'p2p_init',  array( $this, 'connection_types' )    );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded'        ), 2 );
+
+		// Register public AJAX handlers
+		add_action( 'wp_ajax_ad_server_jsonp_page_data',        array( $this, 'jsonp_page' ) );
+		add_action( 'wp_ajax_nopriv_ad_server_jsonp_page_data', array( $this, 'jsonp_page' ) );
 	}
 
 	/**
@@ -913,6 +917,39 @@ class Ad_Server {
 		}
 
 		return $ad_html;
+	}
+
+	/**
+	 * Get page data in JSONP from AJAX request.
+	 */
+	public function jsonp_page() {
+		// Get page ID
+		$page_id = ( isset( $_GET['page_id'] ) && $_GET['page_id'] ) ? $_GET['page_id'] : '';
+		$page_id = absint( $page_id );
+
+		// Get callback parameter
+		$callback = ( isset( $_GET['callback'] ) && $_GET['callback'] ) ? $_GET['callback'] : '';
+
+		// Create default empty parameters
+		$ad_jsonp = $ad_html = '';
+
+		// Get page data
+		$page_data = $this->get_page_data( $page_id );
+
+		// If there is no page send that there is no content
+		if ( ! $page_data ) {
+			$status = 204;
+		} else {
+			$status = 200;
+		}
+
+		// Encode everything in JSON
+		$ad_json = wp_json_encode( array( 'status' => $status, 'page_data' => $page_data ) );
+
+		// If there is a callback, use it, othewise simple JSON output
+		$ad_jsonp = $callback ? $callback . '(' . $ad_json . ');' : $ad_json;
+
+		die( $ad_jsonp );
 	}
 }
 endif;
