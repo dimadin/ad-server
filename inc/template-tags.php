@@ -10,6 +10,17 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
+ * Get an array of zones from a page.
+ *
+ * @param int $page ID of the page.
+ * @return array $page_data An array of zones of the page.
+ */
+function get_ad_server_page_data( $page ) {
+	global $ad_server;
+	return $ad_server->get_page_data( $page );
+}
+
+/**
  * Get data for single ad from a zone.
  *
  * @param int $zone ID of the zone.
