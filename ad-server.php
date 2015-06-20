@@ -796,6 +796,41 @@ class Ad_Server {
 	}
 
 	/**
+	 * Get an array of zones from a page.
+	 *
+	 * @access public
+	 *
+	 * @param int $page ID of the page.
+	 * @return array $page_data An array of zones of the page.
+	 */
+	public function get_page_data( $page ) {
+		$page_data = array();
+
+		$args = array (
+			'post_type'       => $this->zone_post_type,
+			'posts_per_page'  => '-1',
+			'fields'          => 'ids',
+			'connected_type'  => 'page_to_zone',
+			'connected_items' => $page,
+			'nopaging'        => true,
+		);
+
+		$zones = get_posts( $args );
+
+		if ( ! $zones ) {
+			return $page_data;
+		}
+
+		foreach ( $zones as $zone ) {
+			$zone_data = get_ad_server_zone_data( $zone );
+
+			$page_data[ $zone ] = $zone_data;
+		}
+
+		return $page_data;
+	}
+
+	/**
 	 * Get an array of elements from a zone.
 	 *
 	 * @access public
