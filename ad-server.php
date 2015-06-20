@@ -803,14 +803,18 @@ class Ad_Server {
 	 * @return array $ad_data An array of elements of the ad.
 	 */
 	public function get_ad_server_zone_data( $zone ) {
-		$keys    = array();
-		$data    = array();
+		$keys = array();
+		$data = array();
+		$zone = absint( $zone );
 
 		$args = array (
-			'post_type'      => $this->ad_post_type,
-			'posts_per_page' => '-1',
-			'fields'         => 'ids',
-			'meta_query'     => array(
+			'post_type'       => $this->ad_post_type,
+			'posts_per_page'  => '-1',
+			'fields'          => 'ids',
+			'connected_type'  => 'ad_to_zone',
+			'connected_items' => $zone,
+			'nopaging'        => true,
+			'meta_query'      => array(
 				'relation'  => 'OR',
 				array(
 					'key'   => '_ad_server_ad_country',
