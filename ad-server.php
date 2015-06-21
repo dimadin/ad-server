@@ -846,9 +846,9 @@ class Ad_Server {
 	 * @return array $ad_data An array of elements of the ad.
 	 */
 	public function get_ad_server_zone_data( $zone ) {
-		$keys = array();
-		$data = array();
-		$zone = absint( $zone );
+		$keys      = array();
+		$zone_data = array();
+		$zone      = absint( $zone );
 
 		$args = array (
 			'post_type'       => $this->ad_post_type,
@@ -872,6 +872,10 @@ class Ad_Server {
 
 		$ads = get_posts( $args );
 
+		if ( ! $ads ) {
+			return $zone_data;
+		}
+
 		foreach ( $ads as $ad ) {
 			$priority = get_post_meta( $ad, '_ad_server_priority', true );
 
@@ -890,16 +894,10 @@ class Ad_Server {
 		$random_key = mt_rand( 0, count( $keys ) - 1 );
 		$ad_id = $keys[ $random_key ];
 
-		// Get ad's image
-		$ad_image = get_the_post_thumbnail( $ad_id, 'full' );
-		$ad_url   = get_post_meta( $ad_id, '_ad_server_url', true );
+		// Get ad's data
+		$zone_data = $this->get_ad_data( $ad_id );
 
-		$ad_data = array(
-			'url'        => $ad_url,
-			'image_html' => $ad_image,
-		);
-
-		return $ad_data;
+		return $zone_data;
 	}
 
 	/**
@@ -920,6 +918,31 @@ class Ad_Server {
 		}
 
 		return $ad_html;
+	}
+
+	/**
+	 * Get an array of elements of ad.
+	 *
+	 * @access public
+	 *
+	 * @param int $ad_id ID of the page.
+	 * @return array $ad_data An array of zones of the page.
+	 */
+	public function get_ad_data( $ad_id ) {
+		$ad_data = array();
+		$ad_id   = absint( $ad_id );
+
+		// Get ad's image
+		if ( $ad_image = get_the_post_thumbnail( $ad_id, 'full' ) )  {
+			$ad_data['image_html'] = $ad_image;
+		}
+
+		// Get ad's URL
+		if ( $ad_url = get_post_meta( $ad_id, '_ad_server_url', true ) ) {
+			$ad_data['url'] = $ad_url;
+		}
+
+		return $ad_data;
 	}
 
 	/**
