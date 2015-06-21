@@ -175,6 +175,9 @@ class Ad_Server {
 		// Register public AJAX handlers
 		add_action( 'wp_ajax_ad_server_jsonp_page_data',        array( $this, 'jsonp_page' ) );
 		add_action( 'wp_ajax_nopriv_ad_server_jsonp_page_data', array( $this, 'jsonp_page' ) );
+
+		add_action( 'wp_ajax_ad_server_jsonp_zone_data',        array( $this, 'jsonp_zone' ) );
+		add_action( 'wp_ajax_nopriv_ad_server_jsonp_zone_data', array( $this, 'jsonp_zone' ) );
 	}
 
 	/**
@@ -945,6 +948,39 @@ class Ad_Server {
 
 		// Encode everything in JSON
 		$ad_json = wp_json_encode( array( 'status' => $status, 'page_data' => $page_data ) );
+
+		// If there is a callback, use it, othewise simple JSON output
+		$ad_jsonp = $callback ? $callback . '(' . $ad_json . ');' : $ad_json;
+
+		die( $ad_jsonp );
+	}
+
+	/**
+	 * Get zone data in JSONP from AJAX request.
+	 */
+	public function jsonp_zone() {
+		// Get zone ID
+		$zone_id = ( isset( $_GET['zone_id'] ) && $_GET['zone_id'] ) ? $_GET['zone_id'] : '';
+		$zone_id = absint( $zone_id );
+
+		// Get callback parameter
+		$callback = ( isset( $_GET['callback'] ) && $_GET['callback'] ) ? $_GET['callback'] : '';
+
+		// Create default empty parameters
+		$ad_jsonp = $ad_html = '';
+
+		// Get zone data
+		$zone_data = $this->get_ad_server_zone_data( $zone_id );
+
+		// If there is no zone send that there is no content
+		if ( ! $zone_data ) {
+			$status = 204;
+		} else {
+			$status = 200;
+		}
+
+		// Encode everything in JSON
+		$ad_json = wp_json_encode( array( 'status' => $status, 'zone_data' => $zone_data ) );
 
 		// If there is a callback, use it, othewise simple JSON output
 		$ad_jsonp = $callback ? $callback . '(' . $ad_json . ');' : $ad_json;
