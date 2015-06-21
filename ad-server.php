@@ -945,6 +945,11 @@ class Ad_Server {
 			$ad_data['url'] = $ad_url;
 		}
 
+		// Get ad's tracking URL
+		if ( isset( $ad_data['url'] ) ) {
+			$ad_data['tracking_url'] = $this->get_ad_tracking_url( $ad_data['url'], $ad_id );
+		}
+
 		/**
 		 * Filter elements of ad.
 		 *
@@ -954,6 +959,32 @@ class Ad_Server {
 		$ad_data = (array) apply_filters( 'ad_server_ad_elements', $ad_data, $ad_id );
 
 		return $ad_data;
+	}
+
+	/**
+	 * Get tracking URL of ad.
+	 *
+	 * @access public
+	 *
+	 * @param string $ad_url URL of ad.
+	 * @param int    $ad_id ID of the ad.
+	 * @return string $ad_url URL of ad with tracking information.
+	 */
+	public function get_ad_tracking_url( $ad_url, $ad_id ) {
+		// Only change it if AJAX hooks exist
+		if ( has_filter( 'wp_ajax_ad_server_redirect_ad', array( $this, 'redirect_ad' ) ) && has_filter( 'wp_ajax_nopriv_ad_server_redirect_ad', array( $this, 'redirect_ad' ) ) ) {
+			$ad_url = add_query_arg( array( 'action' => 'ad_server_redirect_ad', 'ad_id' => $ad_id ), admin_url( 'admin-ajax.php' ) );
+		}
+
+		/**
+		 * Filter tracking URL of ad.
+		 *
+		 * @param string $ad_url URL of ad.
+		 * @param int    $ad_id  ID of the ad.
+		 */
+		$ad_url = (string) apply_filters( 'ad_server_ad_tracking_url', $ad_url, $ad_id );
+
+		return $ad_url;
 	}
 
 	/**
