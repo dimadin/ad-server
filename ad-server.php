@@ -942,6 +942,14 @@ class Ad_Server {
 			$ad_data['url'] = $ad_url;
 		}
 
+		/**
+		 * Filter elements of ad.
+		 *
+		 * @param array $ad_data An array of elements of the ad.
+		 * @param int   $ad_id   ID of the ad.
+		 */
+		$ad_data = (array) apply_filters( 'ad_server_ad_elements', $ad_data, $ad_id );
+
 		return $ad_data;
 	}
 
