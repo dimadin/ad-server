@@ -178,6 +178,9 @@ class Ad_Server {
 
 		add_action( 'wp_ajax_ad_server_jsonp_zone_data',        array( $this, 'jsonp_zone' ) );
 		add_action( 'wp_ajax_nopriv_ad_server_jsonp_zone_data', array( $this, 'jsonp_zone' ) );
+
+		add_action( 'wp_ajax_ad_server_redirect_ad',            array( $this, 'redirect_ad' ) );
+		add_action( 'wp_ajax_nopriv_ad_server_redirect_ad',     array( $this, 'redirect_ad' ) );
 	}
 
 	/**
@@ -1017,6 +1020,42 @@ class Ad_Server {
 		$ad_jsonp = $callback ? $callback . '(' . $ad_json . ');' : $ad_json;
 
 		die( $ad_jsonp );
+	}
+
+	/**
+	 * Redirect to ad's URL from AJAX request.
+	 */
+	public function redirect_ad() {
+		// Get ad ID
+		$ad_id = ( isset( $_GET['ad_id'] ) && $_GET['ad_id'] ) ? $_GET['ad_id'] : '';
+		$ad_id = absint( $ad_id );
+
+		// Get ad URL
+		$ad_url = $ad_id ? get_post_meta( $ad_id, '_ad_server_url', true ) : '';
+
+		/**
+		 * Filter URL of ad.
+		 *
+		 * @param string $ad_url URL of ad.
+		 * @param int    $ad_id  ID of the ad.
+		 */
+		$ad_url = (string) apply_filters( 'ad_server_ad_redirect_url', $ad_url, $ad_id );
+
+		// If ad's URL is empty, redirect to site's homepage
+		if ( ! $ad_url ) {
+			$ad_url = site_url( '/' );
+		}
+
+		/**
+		 * Fires before redirecting.
+		 *
+		 * @param string $ad_url URL of ad.
+		 * @param int    $ad_id  ID of the ad.
+		 */
+		do_action( 'ad_server_before_ad_redirect', $ad_url, $ad_id );
+
+		wp_redirect( $ad_url );
+		exit;
 	}
 }
 endif;
