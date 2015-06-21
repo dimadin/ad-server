@@ -925,8 +925,8 @@ class Ad_Server {
 	 *
 	 * @access public
 	 *
-	 * @param int $ad_id ID of the page.
-	 * @return array $ad_data An array of zones of the page.
+	 * @param int $ad_id ID of the ad.
+	 * @return array $ad_data An array of elements of the ad.
 	 */
 	public function get_ad_data( $ad_id ) {
 		$ad_data = array();
