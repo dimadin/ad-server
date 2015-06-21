@@ -950,6 +950,9 @@ class Ad_Server {
 			$ad_data['tracking_url'] = $this->get_ad_tracking_url( $ad_data['url'], $ad_id );
 		}
 
+		// Include ad's ID
+		$ad_data['ad_id'] = $ad_id;
+
 		/**
 		 * Filter elements of ad.
 		 *
