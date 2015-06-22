@@ -1020,6 +1020,12 @@ class Ad_Server {
 		// If there is a callback, use it, othewise simple JSON output
 		$ad_jsonp = $callback ? $callback . '(' . $ad_json . ');' : $ad_json;
 
+		// Define proper type
+		$type = $callback ? 'javascript' : 'json';
+
+		// Add proper header
+		header( 'Content-Type: application/' . $type );
+
 		die( $ad_jsonp );
 	}
 
@@ -1052,6 +1058,12 @@ class Ad_Server {
 
 		// If there is a callback, use it, othewise simple JSON output
 		$ad_jsonp = $callback ? $callback . '(' . $ad_json . ');' : $ad_json;
+
+		// Define proper type
+		$type = $callback ? 'javascript' : 'json';
+
+		// Add proper header
+		header( 'Content-Type: application/' . $type );
 
 		die( $ad_jsonp );
 	}
