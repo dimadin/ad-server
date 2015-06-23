@@ -159,12 +159,12 @@ class Ad_Server {
 		$this->path = rtrim( plugin_dir_path( __FILE__ ), '/' );
 
 		// Set post types names
-		$this->publisher_post_type  = $this->publisher_post_type();
-		$this->site_post_type       = $this->site_post_type();
-		$this->page_post_type       = $this->page_post_type();
-		$this->zone_post_type       = $this->zone_post_type();
-		$this->advertiser_post_type = $this->advertiser_post_type();
-		$this->campaign_post_type   = $this->campaign_post_type();
+		$this->publisher_post_type  = $this->post_type_name( 'publisher' );
+		$this->site_post_type       = $this->post_type_name( 'site' );
+		$this->page_post_type       = $this->post_type_name( 'page' );
+		$this->zone_post_type       = $this->post_type_name( 'zone' );
+		$this->advertiser_post_type = $this->post_type_name( 'advertiser' );
+		$this->campaign_post_type   = $this->post_type_name( 'campaign' );
 		$this->ad_post_type         = $this->ad_post_type();
 
 		// Register main hooks
@@ -669,111 +669,24 @@ class Ad_Server {
 	}
 
 	/**
-	 * Get name of publisher post type.
+	 * Get name of post type.
 	 *
 	 * @access public
 	 *
-	 * @return string $ad_post_type The name of the post type. Default 'ad_server_publisher'.
+	 * @param string $type The name of the post type.
+	 * @return string $post_type The name of the Ad Server post type.
 	 */
-	public function publisher_post_type() {
+	public function post_type_name( $type ) {
 		/**
-		 * Filter the name of the publisher post type.
+		 * Filter the name of the post type.
 		 *
-		 * @param string $ad_post_type The name of the publisher post type. Default 'ad_server_publisher'.
-		 */
-		$publisher_post_type = sanitize_key( apply_filters( 'ad_server_publisher_post_type_name', 'ad_server_publisher' ) );
-
-		return $publisher_post_type;
-	}
-
-	/**
-	 * Get name of site post type.
-	 *
-	 * @access public
-	 *
-	 * @return string $ad_post_type The name of the post type. Default 'ad_server_site'.
-	 */
-	public function site_post_type() {
-		/**
-		 * Filter the name of the site post type.
+		 * The dynamic portion of the hook name, `$type`, refers to the post type name.
 		 *
-		 * @param string $ad_post_type The name of the site post type. Default 'ad_server_site'.
+		 * @param string $post_type The name of the post type.
 		 */
-		$site_post_type = sanitize_key( apply_filters( 'ad_server_site_post_type_name', 'ad_server_site' ) );
+		$post_type = sanitize_key( apply_filters( 'ad_server_' . $type . '_post_type_name', 'ad_server_' . $type ) );
 
-		return $site_post_type;
-	}
-
-	/**
-	 * Get name of page post type.
-	 *
-	 * @access public
-	 *
-	 * @return string $ad_post_type The name of the post type. Default 'ad_server_page'.
-	 */
-	public function page_post_type() {
-		/**
-		 * Filter the name of the page post type.
-		 *
-		 * @param string $ad_post_type The name of the page post type. Default 'ad_server_page'.
-		 */
-		$page_post_type = sanitize_key( apply_filters( 'ad_server_page_post_type_name', 'ad_server_page' ) );
-
-		return $page_post_type;
-	}
-
-	/**
-	 * Get name of zone post type.
-	 *
-	 * @access public
-	 *
-	 * @return string $ad_post_type The name of the post type. Default 'ad_server_zone'.
-	 */
-	public function zone_post_type() {
-		/**
-		 * Filter the name of the zone post type.
-		 *
-		 * @param string $ad_post_type The name of the zone post type. Default 'ad_server_zone'.
-		 */
-		$zone_post_type = sanitize_key( apply_filters( 'ad_server_zone_post_type_name', 'ad_server_zone' ) );
-
-		return $zone_post_type;
-	}
-
-	/**
-	 * Get name of advertiser post type.
-	 *
-	 * @access public
-	 *
-	 * @return string $ad_post_type The name of the post type. Default 'ad_server_advertiser'.
-	 */
-	public function advertiser_post_type() {
-		/**
-		 * Filter the name of the advertiser post type.
-		 *
-		 * @param string $ad_post_type The name of the advertiser post type. Default 'ad_server_advertiser'.
-		 */
-		$advertiser_post_type = sanitize_key( apply_filters( 'ad_server_advertiser_post_type_name', 'ad_server_advertiser' ) );
-
-		return $advertiser_post_type;
-	}
-
-	/**
-	 * Get name of campaign post type.
-	 *
-	 * @access public
-	 *
-	 * @return string $ad_post_type The name of the post type. Default 'ad_server_campaign'.
-	 */
-	public function campaign_post_type() {
-		/**
-		 * Filter the name of the campaign post type.
-		 *
-		 * @param string $ad_post_type The name of the campaign post type. Default 'ad_server_campaign'.
-		 */
-		$campaign_post_type = sanitize_key( apply_filters( 'ad_server_campaign_post_type_name', 'ad_server_campaign' ) );
-
-		return $campaign_post_type;
+		return $post_type;
 	}
 
 	/**
