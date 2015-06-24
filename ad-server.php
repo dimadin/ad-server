@@ -172,6 +172,9 @@ class Ad_Server {
 		add_action( 'p2p_init',  array( $this, 'connection_types' )    );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded'        ), 2 );
 
+		// Register Posts 2 Posts automatic connectors
+		add_action( 'p2p_created_connection', array( $this, 'p2p_created_connection' ) );
+
 		// Register public AJAX handlers
 		add_action( 'wp_ajax_ad_server_jsonp_page_data',        array( $this, 'jsonp_page' ) );
 		add_action( 'wp_ajax_nopriv_ad_server_jsonp_page_data', array( $this, 'jsonp_page' ) );
@@ -715,6 +718,79 @@ class Ad_Server {
 	public function maybe_load_admin() {
 		if ( ! class_exists( 'Ad_Server_Meta_Box' ) ) {
 			require_once( $this->path . '/inc/class-ad-server-meta-box.php' );
+		}
+	}
+
+	/**
+	 * Connect related posts when connection is made.
+	 *
+	 * @access public
+	 *
+	 * @param int $p2p_id ID of the connection.
+	 */
+	public function p2p_created_connection( $p2p_id ) {
+		// Get connection information
+		$p2p_connection = p2p_get_connection( $p2p_id );
+
+		if ( ! $p2p_connection ) {
+			return;
+		}
+
+		$p2p_type = $p2p_connection->p2p_type;
+		$p2p_from = $p2p_connection->p2p_from;
+		$p2p_to   = $p2p_connection->p2p_to;
+
+		switch ( $p2p_type ) {
+			// Connect ads from campaign to zone when campaign and zone are connected
+			case 'campaign_to_zone' :
+				$this->connect_related(
+					array(
+						'post_type_from'       => $this->ad_post_type,
+						'post_type_to'         => $this->zone_post_type,
+						'connected_type_from'  => 'campaign_to_ad',
+						'connected_type_to'    => 'ad_to_zone',
+						'connected_items_from' => $p2p_from,
+						'connected_items_to'   => $p2p_to,
+						'connection_direction' => 'from',
+					)
+				);
+				break;
+		}
+	}
+
+	/**
+	 * Connect related posts.
+	 *
+	 * @access public
+	 *
+	 * @return array $arg An array of arguments that make connection.
+	 */
+	public function connect_related( $args ) {
+		// Find related posts for connection
+		$related_args = array (
+			'post_type'       => $args['post_type_from'],
+			'posts_per_page'  => '-1',
+			'fields'          => 'ids',
+			'connected_type'  => $args['connected_type_from'],
+			'connected_items' => $args['connected_items_from'],
+			'nopaging'        => true,
+		);
+
+		$relateds = get_posts( $related_args );
+
+		if ( ! $relateds ) {
+			return;
+		}
+
+		// Loop through all related post
+		foreach ( $relateds as $related ) {
+			$new_connection_args = array(
+				'from' => $related,
+				'to'   => $args['connected_items_to'],
+				'direction'   => $args['connection_direction'],
+			);
+
+			p2p_create_connection( $args['connected_type_to'], $new_connection_args );
 		}
 	}
 
