@@ -670,6 +670,9 @@ class Ad_Server {
 	 * @access public
 	 */
 	public function wp_loaded() {
+		// Register shortcode
+		add_shortcode( 'ad-server-zone', array( $this, 'get_zone_container_shortcode' ) );
+
 		// Set information about current IP
 		new Ad_Server_IP_Resolver( $this );
 
@@ -938,6 +941,29 @@ class Ad_Server {
 		$zone_container = '<div id="ad-server-' . esc_attr( $zone_id ) . '"></div>';
 
 		return $zone_container;
+	}
+
+	/**
+	 * Get HTML container for a zone from shortcode.
+	 *
+	 * @access public
+	 *
+	 * @param arry $atts Attributes of the shortocde.
+	 * @return string $zone_container Container of the zone.
+	 */
+	public function get_zone_container_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+				'zone_id' => '',
+			),
+			$atts,
+			'ad-server-zone'
+		);
+
+		if ( $atts['zone_id'] ) {
+			return $this->get_zone_container( $atts['zone_id'] );
+		} else {
+			return '';
+		}
 	}
 
 	/**
