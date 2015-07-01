@@ -50,3 +50,13 @@ function get_ad_server_zone( $zone ) {
 function ad_server_zone( $zone ) {
 	echo get_ad_server_zone( $zone );
 }
+
+/**
+ * Display HTML container for a zone.
+ *
+ * @param int $zone_id ID of the zone.
+ */
+function ad_server_zone_container( $zone_id ) {
+	global $ad_server;
+	echo $ad_server->get_zone_container( $zone_id );
+}

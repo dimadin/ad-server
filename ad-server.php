@@ -143,6 +143,15 @@ class Ad_Server {
 	public $continent;
 
 	/**
+	 * Is any zone displayed on the page.
+	 *
+	 * @access public
+	 * 
+	 * @var bool
+	 */
+	public $zones_displayed;
+
+	/**
 	 * Initialize Ad_Server object.
 	 *
 	 * Set class properties and add main methods to appropriate hooks.
@@ -157,6 +166,9 @@ class Ad_Server {
 
 		// Set path
 		$this->path = rtrim( plugin_dir_path( __FILE__ ), '/' );
+
+		// No zones displayed, yet
+		$this->zones_displayed = false;
 
 		// Set post types names
 		$this->publisher_post_type  = $this->post_type_name( 'publisher' );
@@ -910,6 +922,22 @@ class Ad_Server {
 		}
 
 		return $ad_html;
+	}
+
+	/**
+	 * Get HTML container for a zone.
+	 *
+	 * @access public
+	 *
+	 * @param int $zone_id ID of the zone.
+	 * @return string $zone_container Container of the zone.
+	 */
+	public function get_zone_container( $zone_id ) {
+		$this->zones_displayed = true;
+
+		$zone_container = '<div id="ad-server-' . esc_attr( $zone_id ) . '"></div>';
+
+		return $zone_container;
 	}
 
 	/**
