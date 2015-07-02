@@ -27,11 +27,43 @@ class Ad_Server_Meta_Box {
 		// Add Ad_Server class
 		$this->ad_server = $ad_server;
 
+		// Register meta boxes using Meta Box
+		add_filter( 'rwmb_meta_boxes', array( $this, 'register_meta_boxes' )  );
+
 		// Register meta boxes
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' )        );
 
 		// Register meta boxes
 		add_action( 'save_post',      array( $this, 'save_post'      ), 10, 2 );
+	}
+
+	/**
+	 * Register meta boxes using Meta Box.
+	 *
+	 * @access public
+	 *
+	 * @param array $meta_boxes List of meta boxes.
+	 * @return array $meta_boxes List of new meta boxes.
+	 */
+	public function register_meta_boxes( $meta_boxes ) {
+		// 1st meta box
+		$meta_boxes[] = array(
+			'title'      => _x( 'Default', 'page status', 'ad-server' ),
+			'post_types' => array( $this->ad_server->page_post_type ),
+			'context'    => 'normal',
+			'priority'   => 'high',
+			'autosave'   => false,
+			'fields'     => array(
+				array(
+					'name' => _x( 'Default', 'page status', 'ad-server' ),
+					'id'   => '_ad_server_page_default',
+					'type' => 'checkbox',
+					'std'  => 0,
+				),
+			),
+		);
+
+		return $meta_boxes;
 	}
 
 	/**
