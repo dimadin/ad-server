@@ -53,6 +53,15 @@ class Ad_Server {
 	public $path;
 
 	/**
+	 * URL path to plugin's directory.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $url_path;
+
+	/**
 	 * Name of publisher post type.
 	 *
 	 * @access public
@@ -164,11 +173,12 @@ class Ad_Server {
 			return;
 		}
 
-		// Set path
-		$this->path = rtrim( plugin_dir_path( __FILE__ ), '/' );
 
 		// No zones displayed, yet
 		$this->zones_displayed = false;
+		// Set paths
+		$this->path     = rtrim( plugin_dir_path( __FILE__ ), '/' );
+		$this->url_path = rtrim( plugin_dir_url(  __FILE__ ), '/' );
 
 		// Set post types names
 		$this->publisher_post_type  = $this->post_type_name( 'publisher' );
@@ -186,6 +196,9 @@ class Ad_Server {
 
 		// Register Posts 2 Posts automatic connectors
 		add_action( 'p2p_created_connection', array( $this, 'p2p_created_connection' ) );
+
+		// Enqueue file for displaying ads
+		add_action( 'wp_footer', array( $this, 'retrieve_page' ), 1 );
 
 		// Register public AJAX handlers
 		add_action( 'wp_ajax_ad_server_jsonp_page_data',        array( $this, 'jsonp_page' ) );
@@ -1031,6 +1044,53 @@ class Ad_Server {
 		$ad_url = (string) apply_filters( 'ad_server_ad_tracking_url', $ad_url, $ad_id );
 
 		return $ad_url;
+	}
+
+	/**
+	 * Retrieve page if needed.
+	 */
+	public function retrieve_page() {
+		/**
+		 * Filter current page ID.
+		 *
+		 * This allows to use template tags to conditionaly set other
+		 * than default page ID. Always return integer.
+		 *
+		 * @param bool $page_id ID of the ad.
+		 */
+		$page_id = (int) apply_filters( 'ad_server_current_page_id', false );
+
+		// At least one zone is displayed or page ID is filtered
+		if ( ! $this->zones_displayed && ! $page_id ) {
+			return;
+		}
+
+		// If no page ID from filter, find default one
+		if ( ! $page_id ) {
+			$args = array (
+				'post_type'       => $this->page_post_type,
+				'posts_per_page'  => '1',
+				'fields'          => 'ids',
+				'meta_key'        => '_ad_server_page_default',
+				'meta_value'      => 1,
+			);
+
+			$pages = get_posts( $args );
+
+			if ( ! $pages ) {
+				return;
+			}
+
+			$page_id = $pages[0];
+		}
+
+		// Enqueue script
+		wp_enqueue_script( 'ad-server', $this->url_path . '/js/ad-server.js', array( 'jquery' ), '0.1', true );
+
+		wp_localize_script( 'ad-server', 'adServer', array(
+			'ajaxURL' => admin_url( 'admin-ajax.php' ),
+			'pageID'  => $page_id,
+		) );
 	}
 
 	/**
