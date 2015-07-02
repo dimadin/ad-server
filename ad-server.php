@@ -152,13 +152,13 @@ class Ad_Server {
 	public $continent;
 
 	/**
-	 * Is any zone displayed on the page.
+	 * Is any zone displayed on the page. Default false.
 	 *
 	 * @access public
 	 * 
 	 * @var bool
 	 */
-	public $zones_displayed;
+	public $zones_displayed = false;
 
 	/**
 	 * Initialize Ad_Server object.
@@ -173,9 +173,6 @@ class Ad_Server {
 			return;
 		}
 
-
-		// No zones displayed, yet
-		$this->zones_displayed = false;
 		// Set paths
 		$this->path     = rtrim( plugin_dir_path( __FILE__ ), '/' );
 		$this->url_path = rtrim( plugin_dir_url(  __FILE__ ), '/' );
