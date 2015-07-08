@@ -125,6 +125,78 @@ class Ad_Server {
 	public $ad_post_type;
 
 	/**
+	 * Name of publisher to site connection.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $publisher_to_site;
+
+	/**
+	 * Name of site to page connection.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $site_to_page;
+
+	/**
+	 * Name of page to zone connection.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $page_to_zone;
+
+	/**
+	 * Name of advertiser to campaign connection.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $advertiser_to_campaign;
+
+	/**
+	 * Name of campaign to ad connection.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $campaign_to_ad;
+
+	/**
+	 * Name of ad to zone connection.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $ad_to_zone;
+
+	/**
+	 * Name of campaign to zone connection.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $campaign_to_zone;
+
+	/**
+	 * Name of advertiser to zone connection.
+	 *
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $advertiser_to_zone;
+
+	/**
 	 * IP address.
 	 *
 	 * @access public
@@ -185,6 +257,16 @@ class Ad_Server {
 		$this->advertiser_post_type = $this->post_type_name( 'advertiser' );
 		$this->campaign_post_type   = $this->post_type_name( 'campaign' );
 		$this->ad_post_type         = $this->post_type_name( 'ad' );
+
+		// Set connections names
+		$this->publisher_to_site      = $this->connection_name( 'publisher_to_site' );
+		$this->site_to_page           = $this->connection_name( 'site_to_page' );
+		$this->page_to_zone           = $this->connection_name( 'page_to_zone' );
+		$this->advertiser_to_campaign = $this->connection_name( 'advertiser_to_campaign' );
+		$this->campaign_to_ad         = $this->connection_name( 'campaign_to_ad' );
+		$this->ad_to_zone             = $this->connection_name( 'ad_to_zone' );
+		$this->campaign_to_zone       = $this->connection_name( 'campaign_to_zone' );
+		$this->advertiser_to_zone     = $this->connection_name( 'advertiser_to_zone' );
 
 		// Register main hooks
 		add_action( 'init',      array( $this, 'init'             )    );
@@ -619,56 +701,56 @@ class Ad_Server {
 	public function connection_types() {
 		// Site belongs to publisher
 		p2p_register_connection_type( array(
-			'name' => 'publisher_to_site',
+			'name' => $this->publisher_to_site,
 			'from' => $this->publisher_post_type,
 			'to'   => $this->site_post_type
 		) );
 
 		// Page belongs to site
 		p2p_register_connection_type( array(
-			'name' => 'site_to_page',
+			'name' => $this->site_to_page,
 			'from' => $this->site_post_type,
 			'to'   => $this->page_post_type
 		) );
 
 		// Zone belongs to page
 		p2p_register_connection_type( array(
-			'name' => 'page_to_zone',
+			'name' => $this->page_to_zone,
 			'from' => $this->page_post_type,
 			'to'   => $this->zone_post_type
 		) );
 
 		// Campaign belongs to advertiser
 		p2p_register_connection_type( array(
-			'name' => 'advertiser_to_campaign',
+			'name' => $this->advertiser_to_campaign,
 			'from' => $this->advertiser_post_type,
 			'to'   => $this->campaign_post_type
 		) );
 
 		// Ad belongs to campaign
 		p2p_register_connection_type( array(
-			'name' => 'campaign_to_ad',
+			'name' => $this->campaign_to_ad,
 			'from' => $this->campaign_post_type,
 			'to'   => $this->ad_post_type
 		) );
 
 		// Ad can be added to zone
 		p2p_register_connection_type( array(
-			'name' => 'ad_to_zone',
+			'name' => $this->ad_to_zone,
 			'from' => $this->ad_post_type,
 			'to'   => $this->zone_post_type
 		) );
 
 		// Campaign can be added to zone
 		p2p_register_connection_type( array(
-			'name' => 'campaign_to_zone',
+			'name' => $this->campaign_to_zone,
 			'from' => $this->campaign_post_type,
 			'to'   => $this->zone_post_type
 		) );
 
 		// Advertiser can be added to zone
 		p2p_register_connection_type( array(
-			'name' => 'advertiser_to_zone',
+			'name' => $this->advertiser_to_zone,
 			'from' => $this->advertiser_post_type,
 			'to'   => $this->zone_post_type
 		) );
@@ -715,6 +797,27 @@ class Ad_Server {
 		$post_type = sanitize_key( apply_filters( 'ad_server_' . $type . '_post_type_name', 'ad_server_' . $type ) );
 
 		return $post_type;
+	}
+
+	/**
+	 * Get name of connection.
+	 *
+	 * @access public
+	 *
+	 * @param string $type The name of the connection.
+	 * @return string $post_type The name of the Ad Server connection.
+	 */
+	public function connection_name( $type ) {
+		/**
+		 * Filter the name of the connection.
+		 *
+		 * The dynamic portion of the hook name, `$type`, refers to the connection name.
+		 *
+		 * @param string $connection The name of the connection.
+		 */
+		$connection = sanitize_key( apply_filters( 'ad_server_' . $type . '_connection_name', 'ad_server_' . $type ) );
+
+		return $connection;
 	}
 
 	/**
