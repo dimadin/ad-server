@@ -15,7 +15,7 @@
  * Description: Simple ad manager.
  * Author:      Milan Dinić
  * Author URI:  http://blog.milandinic.com/
- * Version:     0.1-alpha-3
+ * Version:     0.1-alpha-4
  * License:     GPL
  */
 
