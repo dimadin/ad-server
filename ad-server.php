@@ -184,7 +184,7 @@ class Ad_Server {
 		$this->zone_post_type       = $this->post_type_name( 'zone' );
 		$this->advertiser_post_type = $this->post_type_name( 'advertiser' );
 		$this->campaign_post_type   = $this->post_type_name( 'campaign' );
-		$this->ad_post_type         = $this->ad_post_type();
+		$this->ad_post_type         = $this->post_type_name( 'ad' );
 
 		// Register main hooks
 		add_action( 'init',      array( $this, 'init'             )    );
@@ -715,24 +715,6 @@ class Ad_Server {
 		$post_type = sanitize_key( apply_filters( 'ad_server_' . $type . '_post_type_name', 'ad_server_' . $type ) );
 
 		return $post_type;
-	}
-
-	/**
-	 * Get name of ad post type.
-	 *
-	 * @access public
-	 *
-	 * @return string $ad_post_type The name of the post type. Default 'ad'.
-	 */
-	public function ad_post_type() {
-		/**
-		 * Filter the name of the ad post type.
-		 *
-		 * @param string $ad_post_type The name of the ad post type. Default 'ad'.
-		 */
-		$ad_post_type = sanitize_key( apply_filters( 'ad_server_ad_post_type_name', 'ad' ) );
-
-		return $ad_post_type;
 	}
 
 	/**
