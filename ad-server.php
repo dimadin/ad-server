@@ -857,8 +857,8 @@ class Ad_Server {
 					array(
 						'post_type_from'       => $this->ad_post_type,
 						'post_type_to'         => $this->zone_post_type,
-						'connected_type_from'  => 'campaign_to_ad',
-						'connected_type_to'    => 'ad_to_zone',
+						'connected_type_from'  => $this->campaign_to_ad,
+						'connected_type_to'    => $this->ad_to_zone,
 						'connected_items_from' => $p2p_from,
 						'connected_items_to'   => $p2p_to,
 						'connection_direction' => 'from',
@@ -919,7 +919,7 @@ class Ad_Server {
 			'post_type'       => $this->zone_post_type,
 			'posts_per_page'  => '-1',
 			'fields'          => 'ids',
-			'connected_type'  => 'page_to_zone',
+			'connected_type'  => $this->page_to_zone,
 			'connected_items' => $page,
 			'nopaging'        => true,
 		);
@@ -956,7 +956,7 @@ class Ad_Server {
 			'post_type'       => $this->ad_post_type,
 			'posts_per_page'  => '-1',
 			'fields'          => 'ids',
-			'connected_type'  => 'ad_to_zone',
+			'connected_type'  => $this->ad_to_zone,
 			'connected_items' => $zone,
 			'nopaging'        => true,
 			'meta_query'      => array(
