@@ -936,6 +936,14 @@ class Ad_Server {
 			$page_data[ $zone ] = $zone_data;
 		}
 
+		/**
+		 * Filter the zones data of the page.
+		 *
+		 * @param array $page_data An array of zones of the page.
+		 * @param int   $page ID of the page.
+		 */
+		$page_data = (array) apply_filters( 'ad_server_get_page_data', $page_data, $page );
+
 		return $page_data;
 	}
 
@@ -998,6 +1006,14 @@ class Ad_Server {
 
 		// Get ad's data
 		$zone_data = $this->get_ad_data( $ad_id );
+
+		/**
+		 * Filter the ad data of the zone.
+		 *
+		 * @param array $zone_data An array of elements of the ad.
+		 * @param int   $zone ID of the zone.
+		 */
+		$zone_data = (array) apply_filters( 'ad_server_get_zone_data', $zone_data, $zone );
 
 		return $zone_data;
 	}
