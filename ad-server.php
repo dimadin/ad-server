@@ -852,7 +852,7 @@ class Ad_Server {
 
 		switch ( $p2p_type ) {
 			// Connect ads from campaign to zone when campaign and zone are connected
-			case 'campaign_to_zone' :
+			case $this->campaign_to_zone :
 				$this->connect_related(
 					array(
 						'post_type_from'       => $this->ad_post_type,
